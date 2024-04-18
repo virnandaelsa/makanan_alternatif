@@ -1,10 +1,13 @@
 package com.example.makanan_alternatif
 
+import android.app.DatePickerDialog
+import android.app.Dialog
+import android.app.TimePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.example.makanan_alternatif.databinding.ActivityTambahKonsulBinding
+import java.util.Calendar
 
 class tambah_konsul : AppCompatActivity() {
     private lateinit var binding: ActivityTambahKonsulBinding
@@ -14,6 +17,11 @@ class tambah_konsul : AppCompatActivity() {
     lateinit var adapterActvP: ArrayAdapter<String>
     lateinit var adapterActvM: ArrayAdapter<String>
 
+    var tahun = 0
+    var bulan = 0
+    var hari = 0
+    var jam = 0
+    var menit = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTambahKonsulBinding.inflate(layoutInflater)
@@ -37,6 +45,28 @@ class tambah_konsul : AppCompatActivity() {
             val namaPasien = cariNamaPasien(nomorPasien)
             binding.tv5.text = namaPasien
         }
+
+        val cal: Calendar = Calendar.getInstance()
+
+        tahun = cal.get(Calendar.YEAR)
+        bulan = cal.get(Calendar.MONTH) + 1
+        hari = cal.get(Calendar.DAY_OF_MONTH)
+        jam = cal.get(Calendar.HOUR)
+        menit = cal.get(Calendar.MINUTE)
+
+        // Menampilkan teks awal pada textView3
+        updateTextView()
+
+        // Menampilkan DatePickerDialog ketika tombol btndp2 ditekan
+        binding.bt1.setOnClickListener {
+            showDialog(10)
+        }
+
+        // Menampilkan TimePickerDialog ketika tombol btntp2 ditekan
+        binding.bt2.setOnClickListener {
+            showDialog(20)
+        }
+
     }
 
     // Fungsi untuk mendapatkan array nomor pasien dari arrayPasien
@@ -58,5 +88,45 @@ class tambah_konsul : AppCompatActivity() {
             }
         }
         return "" // Jika nomor pasien tidak ditemukan
+    }
+
+    private fun updateTextView() {
+        binding.tvTanggal.text = "Tanggal $hari, $bulan, $tahun"
+        binding.Jam.text = "Jam $jam : $menit"
+    }
+
+    override fun onCreateDialog(id: Int): Dialog {
+        return when (id) {
+            10 -> {
+                // Membuat DatePickerDialog dan mengembalikannya
+                DatePickerDialog(
+                    this,
+                    DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                        tahun = year
+                        bulan = month + 1
+                        hari = dayOfMonth
+                        updateTextView()
+                    },
+                    tahun,
+                    bulan - 1,
+                    hari
+                )
+            }
+            20 -> {
+                // Membuat TimePickerDialog dan mengembalikannya
+                TimePickerDialog(
+                    this,
+                    TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                        jam = hourOfDay
+                        menit = minute
+                        updateTextView()
+                    },
+                    jam,
+                    menit,
+                    true
+                )
+            }
+            else -> super.onCreateDialog(id)
+        }
     }
 }

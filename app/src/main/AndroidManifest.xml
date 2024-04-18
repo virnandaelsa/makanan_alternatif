@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Makanan_alternatif"
         tools:targetApi="31">
         <activity
+            android:name=".kirim_hasil_konsul"
+            android:exported="false" />
+        <activity
             android:name=".dash_ahli_gizi"
             android:exported="false" />
         <activity
